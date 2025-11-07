@@ -1,10 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
+import {assests} from '../assets/assets'
 
 const Login = () => {
+
+  const[state, setState] = useState('Admin')
+
   return (
-    <div>
-      <Login />
-    </div>
+    <form>
+      <div>
+        <p><span></span></p>
+      </div>
+    </form>
   )
 }
 
