@@ -98,8 +98,11 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
     try {
 
-        const { userId, name, phone, address, dob, gender } = req.body
+        const userId = req.userId
+        const { name, phone, address, dob, gender } = req.body
+
         const imageFile = req.file
+
 
         if (!name || !phone || !address || !dob || !gender) {
             return res.json({ success: false, message: "Data Missing" })
