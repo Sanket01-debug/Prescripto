@@ -135,7 +135,8 @@ const bookAppointment = async (req,res) => {
 
     try {
 
-        const {userId, docId, slotDate, slotTime } = req.body
+        const { docId, slotDate, slotTime } = req.body
+        const userId = req.userId   // ✅ from auth middleware
 
         const docData = await doctorModel.findById(docId).select('-password')
 
