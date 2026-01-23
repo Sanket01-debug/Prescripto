@@ -7,15 +7,15 @@ import appointmentModel from "../models/appointmentModel.js"
 const changeAvailability = async (req, res) => {
     try {
 
-        const {docId} = req.body
+        const { docId } = req.body
 
         const docData = await doctorModel.findById(docId)
-        await doctorModel.findByIdAndUpdate(docId,{available: !docData.available})
-        res.json({success:true, message: 'Availability Changed'})
+        await doctorModel.findByIdAndUpdate(docId, { available: !docData.available })
+        res.json({ success: true, message: 'Availability Changed' })
 
     } catch (error) {
         console.log(error)
-        res.json({success:false, message:error.message})        
+        res.json({ success: false, message: error.message })
     }
 }
 
@@ -24,11 +24,11 @@ const doctorList = async (req, res) => {
 
         const doctors = await doctorModel.find({}).select(['-password', '-email'])
 
-        res.json({success:true,doctors})
-        
+        res.json({ success: true, doctors })
+
     } catch (error) {
         console.log(error)
-        res.json({success:false, message:error.message})
+        res.json({ success: false, message: error.message })
     }
 }
 
@@ -38,27 +38,27 @@ const loginDoctor = async (req, res) => {
     try {
 
         const { email, password } = req.body
-        const doctor = await doctorModel.findOne({email}) 
+        const doctor = await doctorModel.findOne({ email })
 
         if (!doctor) {
-            return res.json({success:false, message:'Invalid credentials'})
+            return res.json({ success: false, message: 'Invalid credentials' })
         }
 
         const isMatch = await bcrypt.compare(password, doctor.password)
 
         if (isMatch) {
 
-            const token = jwt.sign({id:doctor._id},process.env.JWT_SECRET)
-            
-            res.json({success:true,token})
+            const token = jwt.sign({ id: doctor._id }, process.env.JWT_SECRET)
+
+            res.json({ success: true, token })
 
         } else {
-            return res.json({success:false, message:'Invalid credentials'})
+            return res.json({ success: false, message: 'Invalid credentials' })
         }
 
     } catch (error) {
         console.log(error)
-        res.json({success:false, message:error.message})
+        res.json({ success: false, message: error.message })
     }
 
 }
@@ -71,61 +71,63 @@ const appointmentsDoctor = async (req, res) => {
         const docId = req.docId
         const appointments = await appointmentModel.find({ docId })
 
-        res.json({ success: true, appointments})
-        
+        res.json({ success: true, appointments })
+
     } catch (error) {
         console.log(error)
-        res.json({success:false, message:error.message})
+        res.json({ success: false, message: error.message })
     }
 
 }
 
 // API to mark appointment completed for doctor panel
-const appointmentComplete = async () => {
+const appointmentComplete = async (req, res) => {
     try {
 
-        const { docId, appointmentId } = req.body
+        const docId = req.docId
+        const { appointmentId } = req.body
 
         const appointmentData = await appointmentModel.findById(appointmentId)
 
-        if(appointmentData && appointmentData.docId === docId){
+        if (appointmentData && appointmentData.docId === docId) {
 
-            await appointmentModel.findByIdAndUpdate(appointmentId, {isCompleted: true})
-            return res.json({success:true, message:'Apppointment Completed'})
+            await appointmentModel.findByIdAndUpdate(appointmentId, { isCompleted: true })
+            return res.json({ success: true, message: 'Apppointment Completed' })
 
         } else {
-            return res.json({success:false, message:'Mark Failed'})
+            return res.json({ success: false, message: 'Mark Failed' })
         }
-        
+
     } catch (error) {
         console.log(error)
-        res.json({success:false, message:error.message})    
+        res.json({ success: false, message: error.message })
     }
 
 }
 
 // API to cancel appointment completed for doctor panel
-const appointmentCancel = async () => {
+const appointmentCancel = async (req, res) => {
     try {
 
-        const { docId, appointmentId } = req.body
+        const docId = req.docId
+        const { appointmentId } = req.body
 
         const appointmentData = await appointmentModel.findById(appointmentId)
 
-        if(appointmentData && appointmentData.docId === docId){
+        if (appointmentData && appointmentData.docId === docId) {
 
-            await appointmentModel.findByIdAndUpdate(appointmentId, {cancelled: true})
-            return res.json({success:true, message:'Apppointment Cancelled'})
+            await appointmentModel.findByIdAndUpdate(appointmentId, { cancelled: true })
+            return res.json({ success: true, message: 'Apppointment Cancelled' })
 
         } else {
-            return res.json({success:false, message:'Cancellation Failed'})
+            return res.json({ success: false, message: 'Cancellation Failed' })
         }
-        
+
     } catch (error) {
         console.log(error)
-        res.json({success:false, message:error.message})    
+        res.json({ success: false, message: error.message })
     }
 
 }
 
-export {changeAvailability, doctorList, loginDoctor, appointmentsDoctor, appointmentCancel, appointmentComplete}
+export { changeAvailability, doctorList, loginDoctor, appointmentsDoctor, appointmentCancel, appointmentComplete }
